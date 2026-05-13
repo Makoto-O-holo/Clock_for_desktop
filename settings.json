@@ -1,12 +1,12 @@
 {
-    "font_family": "Arial",
-    "font_color": "#aaffff",
+    "font_family": "Meiryo UI",
+    "font_color": "#ff691e",
     "background_color": "#0a1c5e",
     "window_color": "#111111",
-    "settings_window_color": "#2B2B2B",
+    "settings_window_color": "#2b2b2b",
     "window_opacity": 0.95,
     "window_width": 718,
     "window_height": 587,
-    "x": -2159,
-    "y": 0
+    "x": -2196,
+    "y": 428
 }
