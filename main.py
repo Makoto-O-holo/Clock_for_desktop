@@ -76,7 +76,7 @@ DEFAULT_SETTINGS = {
 if getattr(sys, 'frozen', False):
     target = sys.executable
 else:
-    target = str(APP_DIR / "dist" / "main.exe")
+    target = str(APP_DIR / "main.dist" / "main.exe")
 
 
 # =========================
