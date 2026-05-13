@@ -153,7 +153,7 @@ lld-link: error: undefined symbol: __SNANL
     <plugin-influence name="options-nanny" influence="condition-used" condition="macos and use_pyqt6" tags_used="macos" result="false" />
     <optimization-time pass="1" time="0.0156" micro_passes="4" max_branch_merge="13" merged_total="118" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="11" merged_total="29" />
-    <code-generation-time time="0.0156" />
+    <code-generation-time time="0.0312" />
     <module_usages>
       <module_usage name="os" finding="absolute" line="1" />
       <module_usage name="pkgutil" finding="absolute" line="20" />
@@ -170,7 +170,7 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="PyQt6.QtCore" kind="PythonExtensionModule" usage="import" reason="Extension module needed for standalone mode." source_path="${sys.prefix}\Lib\site-packages\PyQt6\QtCore.pyd" distribution="PyQt6,PyQt6-Qt6,PyQt6_sip">
-    <optimization-time pass="1" time="0.0156" />
+    <optimization-time pass="1" time="0.0000" />
     <optimization-time pass="2" time="0.0000" />
     <module_usages />
   </module>
@@ -211,30 +211,29 @@ lld-link: error: undefined symbol: __SNANL
     <module_usages />
   </module>
   <module name="__main__" kind="PythonMainModule" usage="root_module" reason="Root module" source_path="${cwd}\main.py">
-    <optimization-time pass="1" time="0.1094" micro_passes="4" max_branch_merge="21" merged_total="1383" />
-    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="21" merged_total="317" />
-    <code-generation-time time="0.0312" />
+    <optimization-time pass="1" time="0.1719" micro_passes="4" max_branch_merge="21" merged_total="1444" />
+    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="21" merged_total="327" />
+    <code-generation-time time="0.0469" />
     <distribution-usages>
+      <distribution-usage name="winshell" />
+      <distribution-usage name="pywin32" />
       <distribution-usage name="PyQt6" />
       <distribution-usage name="PyQt6-Qt6" />
       <distribution-usage name="PyQt6_sip" />
-      <distribution-usage name="pywin32" />
     </distribution-usages>
     <module_usages>
       <module_usage name="sys" finding="absolute" line="1" />
       <module_usage name="os" finding="absolute" line="2" />
       <module_usage name="json" finding="absolute" line="3" />
-      <module_usage name="time" finding="absolute" line="4" />
-      <module_usage name="pathlib" finding="absolute" line="6" />
-      <module_usage name="datetime" finding="absolute" line="7" />
+      <module_usage name="pathlib" finding="absolute" line="5" />
+      <module_usage name="datetime" finding="absolute" line="6" />
+      <module_usage name="winshell" finding="absolute" line="10" />
+      <module_usage name="win32com.client" finding="absolute" line="11" />
+      <module_usage name="win32com.client.Dispatch" finding="not-found" line="11" />
       <module_usage name="PyQt6.QtWidgets" finding="absolute" line="13" />
-      <module_usage name="PyQt6.QtGui" finding="absolute" line="21" />
-      <module_usage name="PyQt6.QtCore" finding="absolute" line="29" />
-      <module_usage name="PyQt6.QtWidgets" finding="absolute" line="322" />
-      <module_usage name="win32com.client" finding="absolute" line="752" />
-      <module_usage name="win32com.client.Dispatch" finding="not-found" line="752" />
-      <module_usage name="ntpath" finding="absolute" line="754" />
-      <module_usage name="ntpath" finding="absolute" line="759" />
+      <module_usage name="PyQt6.QtGui" finding="absolute" line="27" />
+      <module_usage name="PyQt6.QtCore" finding="absolute" line="35" />
+      <module_usage name="ntpath" finding="absolute" line="918" />
       <module_usage name="_collections_abc" finding="absolute" line="1" />
       <module_usage name="_opcode_metadata" finding="absolute" line="1" />
       <module_usage name="_weakrefset" finding="absolute" line="1" />
@@ -576,6 +575,12 @@ lld-link: error: undefined symbol: __SNANL
   <module name="__phello__.spam" kind="UncompiledPythonModule" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.prefix}\Lib\__phello__\spam.py">
     <optimization-time pass="1" time="0.0000" micro_passes="4" />
     <optimization-time pass="2" time="0.0000" />
+    <module_usages />
+  </module>
+  <module name="__winshell_version__" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\__winshell_version__.py" distribution="winshell">
+    <optimization-time pass="1" time="0.0000" micro_passes="2" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" />
+    <code-generation-time time="0.0000" />
     <module_usages />
   </module>
   <module name="_aix_support" kind="UncompiledPythonModule" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.prefix}\Lib\_aix_support.py">
@@ -1318,7 +1323,7 @@ lld-link: error: undefined symbol: __SNANL
   </module>
   <module name="commctrl" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32\lib\commctrl.py">
     <optimization-time pass="1" time="0.0156" micro_passes="3" max_branch_merge="2" merged_total="12" />
-    <optimization-time pass="2" time="0.0156" micro_passes="1" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" />
     <code-generation-time time="0.0469" />
     <module_usages />
   </module>
@@ -3873,7 +3878,7 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="pywin.dialogs.list" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\dialogs\list.py">
-    <optimization-time pass="1" time="0.1094" micro_passes="5" max_branch_merge="14" merged_total="886" />
+    <optimization-time pass="1" time="0.1250" micro_passes="5" max_branch_merge="14" merged_total="886" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="14" merged_total="172" />
     <code-generation-time time="0.0156" />
     <distribution-usages>
@@ -3889,9 +3894,9 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="pywin.dialogs.status" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\dialogs\status.py">
-    <optimization-time pass="1" time="0.7969" micro_passes="4" max_branch_merge="20" merged_total="820" />
+    <optimization-time pass="1" time="0.8281" micro_passes="4" max_branch_merge="20" merged_total="820" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="20" merged_total="181" />
-    <code-generation-time time="0.0156" />
+    <code-generation-time time="0.0312" />
     <distribution-usages>
       <distribution-usage name="pywin32" />
     </distribution-usages>
@@ -3919,7 +3924,7 @@ lld-link: error: undefined symbol: __SNANL
   <module name="pywin.mfc.dialog" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\mfc\dialog.py">
     <optimization-time pass="1" time="0.0156" micro_passes="4" max_branch_merge="24" merged_total="1075" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="24" merged_total="245" />
-    <code-generation-time time="0.0312" />
+    <code-generation-time time="0.0156" />
     <distribution-usages>
       <distribution-usage name="pywin32" />
     </distribution-usages>
@@ -3931,9 +3936,9 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="pywin.mfc.object" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\mfc\object.py">
-    <optimization-time pass="1" time="0.0000" micro_passes="4" max_branch_merge="10" merged_total="375" />
-    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="10" merged_total="84" />
-    <code-generation-time time="0.0000" />
+    <optimization-time pass="1" time="0.0156" micro_passes="4" max_branch_merge="10" merged_total="375" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="10" merged_total="84" />
+    <code-generation-time time="0.0156" />
     <distribution-usages>
       <distribution-usage name="pywin32" />
     </distribution-usages>
@@ -3944,7 +3949,7 @@ lld-link: error: undefined symbol: __SNANL
   <module name="pywin.mfc.thread" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\mfc\thread.py">
     <optimization-time pass="1" time="0.0000" micro_passes="3" max_branch_merge="9" merged_total="200" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="9" merged_total="64" />
-    <code-generation-time time="0.0156" />
+    <code-generation-time time="0.0000" />
     <distribution-usages>
       <distribution-usage name="pywin32" />
     </distribution-usages>
@@ -3957,7 +3962,7 @@ lld-link: error: undefined symbol: __SNANL
   <module name="pywin.mfc.window" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\pywin\mfc\window.py">
     <optimization-time pass="1" time="0.0000" micro_passes="3" max_branch_merge="8" merged_total="378" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="8" merged_total="118" />
-    <code-generation-time time="0.0000" />
+    <code-generation-time time="0.0156" />
     <distribution-usages>
       <distribution-usage name="pywin32" />
     </distribution-usages>
@@ -3980,7 +3985,7 @@ lld-link: error: undefined symbol: __SNANL
   <module name="pywintypes" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32\lib\pywintypes.py" distribution="pywin32">
     <optimization-time pass="1" time="0.0156" micro_passes="5" max_branch_merge="31" merged_total="322" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="28" merged_total="63" />
-    <code-generation-time time="0.0156" />
+    <code-generation-time time="0.0000" />
     <module_usages>
       <module_usage name="importlib.machinery" finding="absolute" line="2" />
       <module_usage name="importlib.util" finding="absolute" line="3" />
@@ -4884,9 +4889,10 @@ lld-link: error: undefined symbol: __SNANL
   </module>
   <module name="win32com" kind="CompiledPythonPackage" usage="import path parent" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\__init__.py" distribution="pywin32">
     <plugin-influence name="implicit-imports" influence="condition-used" condition="win32" tags_used="win32" result="true" />
+    <plugin-influence name="dll-files" influence="condition-used" condition="win32" tags_used="win32" result="true" />
     <optimization-time pass="1" time="0.0000" micro_passes="4" max_branch_merge="5" merged_total="285" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="5" merged_total="70" />
-    <code-generation-time time="0.0000" />
+    <code-generation-time time="0.0156" />
     <module_usages>
       <module_usage name="os" finding="absolute" line="1" />
       <module_usage name="__future__" finding="absolute" line="4" />
@@ -4901,8 +4907,8 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="win32com.client" kind="CompiledPythonPackage" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\__init__.py" distribution="pywin32">
-    <optimization-time pass="1" time="1.8281" micro_passes="4" max_branch_merge="24" merged_total="1923" />
-    <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="20" merged_total="411" />
+    <optimization-time pass="1" time="1.8906" micro_passes="4" max_branch_merge="24" merged_total="1923" />
+    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="20" merged_total="411" />
     <code-generation-time time="0.0312" />
     <module_usages>
       <module_usage name="os" finding="absolute" line="1" />
@@ -4931,7 +4937,7 @@ lld-link: error: undefined symbol: __SNANL
   </module>
   <module name="win32com.client.build" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\build.py" distribution="pywin32">
     <optimization-time pass="1" time="0.0781" micro_passes="5" max_branch_merge="35" merged_total="3544" />
-    <optimization-time pass="2" time="0.0312" micro_passes="1" max_branch_merge="25" merged_total="696" />
+    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="25" merged_total="696" />
     <code-generation-time time="0.0312" />
     <module_usages>
       <module_usage name="builtins" finding="absolute" line="19" />
@@ -4945,7 +4951,7 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="win32com.client.dynamic" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\dynamic.py" distribution="pywin32">
-    <optimization-time pass="1" time="0.0625" micro_passes="5" max_branch_merge="34" merged_total="3183" />
+    <optimization-time pass="1" time="0.0469" micro_passes="5" max_branch_merge="34" merged_total="3183" />
     <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="27" merged_total="621" />
     <code-generation-time time="0.0312" />
     <module_usages>
@@ -4964,9 +4970,9 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="win32com.client.gencache" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\gencache.py" distribution="pywin32">
-    <optimization-time pass="1" time="0.1250" micro_passes="5" max_branch_merge="20" merged_total="2736" />
-    <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="19" merged_total="529" />
-    <code-generation-time time="0.0469" />
+    <optimization-time pass="1" time="0.1406" micro_passes="5" max_branch_merge="20" merged_total="2736" />
+    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="19" merged_total="529" />
+    <code-generation-time time="0.0312" />
     <module_usages>
       <module_usage name="__future__" finding="absolute" line="24" />
       <module_usage name="contextlib" finding="absolute" line="26" />
@@ -5008,9 +5014,9 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="win32com.client.genpy" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\genpy.py" distribution="pywin32">
-    <optimization-time pass="1" time="0.2031" micro_passes="6" max_branch_merge="48" merged_total="7838" />
+    <optimization-time pass="1" time="0.2188" micro_passes="6" max_branch_merge="48" merged_total="7838" />
     <optimization-time pass="2" time="0.0312" micro_passes="1" max_branch_merge="46" merged_total="1282" />
-    <code-generation-time time="0.0781" />
+    <code-generation-time time="0.0938" />
     <module_usages>
       <module_usage name="os" finding="absolute" line="16" />
       <module_usage name="sys" finding="absolute" line="17" />
@@ -5025,7 +5031,7 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="win32com.client.makepy" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\makepy.py" distribution="pywin32">
-    <optimization-time pass="1" time="0.0625" micro_passes="5" max_branch_merge="25" merged_total="2274" />
+    <optimization-time pass="1" time="0.0781" micro_passes="5" max_branch_merge="25" merged_total="2274" />
     <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="25" merged_total="448" />
     <code-generation-time time="0.0312" />
     <module_usages>
@@ -5062,23 +5068,71 @@ lld-link: error: undefined symbol: __SNANL
   <module name="win32com.client.util" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\client\util.py" distribution="pywin32">
     <optimization-time pass="1" time="0.0000" micro_passes="4" max_branch_merge="13" merged_total="359" />
     <optimization-time pass="2" time="0.0000" micro_passes="1" max_branch_merge="9" merged_total="73" />
-    <code-generation-time time="0.0000" />
+    <code-generation-time time="0.0156" />
     <module_usages>
       <module_usage name="pythoncom" finding="absolute" line="7" />
       <module_usage name="win32com.client" finding="absolute" line="8" />
       <module_usage name="win32com.client._get_good_object_" finding="not-found" line="8" />
     </module_usages>
   </module>
+  <module name="win32com.shell" kind="CompiledPythonPackage" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32comext\shell\__init__.py" distribution="pywin32">
+    <optimization-time pass="1" time="0.0000" micro_passes="2" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" />
+    <code-generation-time time="0.0000" />
+    <module_usages>
+      <module_usage name="os" finding="absolute" line="1" />
+      <module_usage name="win32com" finding="absolute" line="2" />
+    </module_usages>
+  </module>
+  <module name="win32com.shell.shell" kind="PythonExtensionModule" usage="import fromlist" reason="Extension module needed for standalone mode." source_path="${sys.prefix}\Lib\site-packages\win32comext\shell\shell.pyd" distribution="pywin32">
+    <optimization-time pass="1" time="0.0000" />
+    <optimization-time pass="2" time="0.0000" />
+    <module_usages />
+  </module>
+  <module name="win32com.shell.shellcon" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32comext\shell\shellcon.py" distribution="pywin32">
+    <optimization-time pass="1" time="0.0156" micro_passes="3" max_branch_merge="2" merged_total="5" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" />
+    <code-generation-time time="0.0312" />
+    <module_usages />
+  </module>
+  <module name="win32com.storagecon" kind="CompiledPythonModule" usage="import fromlist" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32com\storagecon.py" distribution="pywin32">
+    <optimization-time pass="1" time="0.0000" micro_passes="2" />
+    <optimization-time pass="2" time="0.0000" micro_passes="1" />
+    <code-generation-time time="0.0000" />
+    <module_usages />
+  </module>
   <module name="win32con" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32\lib\win32con.py">
-    <optimization-time pass="1" time="0.1250" micro_passes="3" max_branch_merge="2" merged_total="48" />
-    <optimization-time pass="2" time="0.0625" micro_passes="1" />
-    <code-generation-time time="0.0938" />
+    <optimization-time pass="1" time="0.1562" micro_passes="3" max_branch_merge="2" merged_total="48" />
+    <optimization-time pass="2" time="0.1094" micro_passes="1" />
+    <code-generation-time time="0.0625" />
     <module_usages />
   </module>
   <module name="win32event" kind="PythonExtensionModule" usage="import" reason="Extension module needed for standalone mode." source_path="${sys.prefix}\Lib\site-packages\win32\win32event.pyd" distribution="pywin32">
     <optimization-time pass="1" time="0.0000" />
     <optimization-time pass="2" time="0.0000" />
     <module_usages />
+  </module>
+  <module name="win32timezone" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32\lib\win32timezone.py">
+    <optimization-time pass="1" time="0.0938" micro_passes="4" max_branch_merge="43" merged_total="3033" />
+    <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="43" merged_total="692" />
+    <code-generation-time time="0.0469" />
+    <distribution-usages>
+      <distribution-usage name="pywin32" />
+    </distribution-usages>
+    <module_usages>
+      <module_usage name="__future__" finding="absolute" line="238" />
+      <module_usage name="datetime" finding="absolute" line="240" />
+      <module_usage name="functools" finding="absolute" line="241" />
+      <module_usage name="logging" finding="absolute" line="242" />
+      <module_usage name="operator" finding="absolute" line="243" />
+      <module_usage name="re" finding="absolute" line="244" />
+      <module_usage name="struct" finding="absolute" line="245" />
+      <module_usage name="winreg" finding="absolute" line="246" />
+      <module_usage name="itertools" finding="absolute" line="247" />
+      <module_usage name="typing" finding="absolute" line="248" />
+      <module_usage name="win32api" finding="absolute" line="261" />
+      <module_usage name="functools" finding="absolute" line="1183" />
+    </module_usages>
   </module>
   <module name="win32ui" kind="PythonExtensionModule" usage="import" reason="Extension module needed for standalone mode." source_path="${sys.prefix}\Lib\site-packages\Pythonwin\win32ui.pyd" distribution="pywin32">
     <plugin-influence name="implicit-imports" influence="condition-used" condition="win32" tags_used="win32" result="true" />
@@ -5095,11 +5149,39 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <module name="winerror" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\win32\lib\winerror.py">
-    <optimization-time pass="1" time="0.0625" micro_passes="4" max_branch_merge="3" merged_total="129" />
+    <optimization-time pass="1" time="0.0781" micro_passes="4" max_branch_merge="3" merged_total="129" />
     <optimization-time pass="2" time="0.0156" micro_passes="1" max_branch_merge="3" merged_total="10" />
-    <code-generation-time time="0.1875" />
+    <code-generation-time time="0.1562" />
     <module_usages>
       <module_usage name="warnings" finding="absolute" line="5" />
+    </module_usages>
+  </module>
+  <module name="winshell" kind="CompiledPythonModule" usage="import" reason="Instructed by user to follow to all modules." source_path="${sys.prefix}\Lib\site-packages\winshell.py" distribution="winshell">
+    <optimization-time pass="1" time="0.2344" micro_passes="5" max_branch_merge="37" merged_total="4697" />
+    <optimization-time pass="2" time="0.0312" micro_passes="1" max_branch_merge="37" merged_total="860" />
+    <code-generation-time time="0.0625" />
+    <distribution-usages>
+      <distribution-usage name="pywin32" />
+    </distribution-usages>
+    <module_usages>
+      <module_usage name="__winshell_version__" finding="absolute" line="26" />
+      <module_usage name="os" finding="absolute" line="28" />
+      <module_usage name="sys" finding="absolute" line="28" />
+      <module_usage name="datetime" finding="absolute" line="29" />
+      <module_usage name="win32con" finding="absolute" line="30" />
+      <module_usage name="win32com" finding="absolute" line="31" />
+      <module_usage name="win32com.storagecon" finding="relative" line="31" />
+      <module_usage name="win32com.shell" finding="absolute" line="32" />
+      <module_usage name="win32com.shell.shell" finding="relative" line="32" />
+      <module_usage name="win32com.shell.shellcon" finding="relative" line="32" />
+      <module_usage name="win32api" finding="absolute" line="33" />
+      <module_usage name="win32timezone" finding="absolute" line="34" />
+      <module_usage name="pythoncom" finding="absolute" line="35" />
+      <module_usage name="collections" finding="absolute" line="49" />
+      <module_usage name="collections.namedtuple" finding="not-found" line="49" />
+      <module_usage name="ntpath" finding="absolute" line="413" />
+      <module_usage name="ntpath" finding="absolute" line="767" />
+      <module_usage name="ntpath" finding="absolute" line="823" />
     </module_usages>
   </module>
   <module name="zipfile" kind="UncompiledPythonPackage" usage="stdlib" reason="Including as part of the non-excluded parts of standard library." source_path="${sys.prefix}\Lib\zipfile\__init__.py">
@@ -5179,9 +5261,9 @@ lld-link: error: undefined symbol: __SNANL
     </module_usages>
   </module>
   <performance>
-    <memory_usage name="after_launch" value="37896192" />
-    <memory_usage name="before_c_code_generation" value="102158336" />
-    <memory_usage name="before_running_scons" value="105545728" />
+    <memory_usage name="after_launch" value="37937152" />
+    <memory_usage name="before_c_code_generation" value="111038464" />
+    <memory_usage name="before_running_scons" value="112734208" />
   </performance>
   <included_dll name="qsvgicon.dll" dest_path="PyQt6\Qt6\plugins\iconengines\qsvgicon.dll" source_path="${sys.prefix}\Lib\site-packages\PyQt6\Qt6\plugins\iconengines\qsvgicon.dll" package="PyQt6" ignored="no" reason="qt plugin" tags="copy" />
   <included_dll name="qgif.dll" dest_path="PyQt6\Qt6\plugins\imageformats\qgif.dll" source_path="${sys.prefix}\Lib\site-packages\PyQt6\Qt6\plugins\imageformats\qgif.dll" package="PyQt6" ignored="no" reason="qt plugin" tags="copy" />
@@ -5235,15 +5317,17 @@ lld-link: error: undefined symbol: __SNANL
   <included_dll name="vcruntime140.dll" dest_path="vcruntime140.dll" source_path="${sys.prefix}\vcruntime140.dll" package="PyQt6" ignored="no" reason="Used by 'PyQt6\Qt6\plugins\iconengines\qsvgicon.dll'" tags="copy" />
   <included_dll name="vcruntime140_1.dll" dest_path="vcruntime140_1.dll" source_path="${sys.prefix}\vcruntime140_1.dll" package="PyQt6" ignored="no" reason="Used by 'PyQt6\Qt6\plugins\iconengines\qsvgicon.dll'" tags="copy" />
   <included_extension name="win32api.pyd" dest_path="win32api.pyd" source_path="${sys.prefix}\Lib\site-packages\win32\win32api.pyd" package="" ignored="no" reason="used extension module" tags="copy" />
+  <included_extension name="shell.pyd" dest_path="win32com\shell\shell.pyd" source_path="${sys.prefix}\Lib\site-packages\win32comext\shell\shell.pyd" package="win32com.shell" ignored="no" reason="used extension module" tags="copy" />
   <included_extension name="win32event.pyd" dest_path="win32event.pyd" source_path="${sys.prefix}\Lib\site-packages\win32\win32event.pyd" package="" ignored="no" reason="used extension module" tags="copy" />
   <included_extension name="win32ui.pyd" dest_path="win32ui.pyd" source_path="${sys.prefix}\Lib\site-packages\Pythonwin\win32ui.pyd" package="" ignored="no" reason="used extension module" tags="copy" />
-  <data_composer blob_size="7128553" total="25220">
+  <data_composer blob_size="7208523" total="28185">
     <module_data filename="__bytecode.const" blob_name=".bytecode" blob_size="6694575" input_size="6719790" />
     <module_data filename="__constants.const" blob_name="" blob_size="918" input_size="2324" />
     <module_data filename="module.PyQt6-preLoad.const" blob_name="PyQt6-preLoad" blob_size="138" input_size="294" />
     <module_data filename="module.PyQt6.QtCore-postLoad.const" blob_name="PyQt6.QtCore-postLoad" blob_size="211" input_size="364" />
     <module_data filename="module.PyQt6.const" blob_name="PyQt6" blob_size="291" input_size="535" />
-    <module_data filename="module.__main__.const" blob_name="__main__" blob_size="5921" input_size="8835" />
+    <module_data filename="module.__main__.const" blob_name="__main__" blob_size="5950" input_size="9458" />
+    <module_data filename="module.__winshell_version__.const" blob_name="__winshell_version__" blob_size="112" input_size="200" />
     <module_data filename="module.commctrl.const" blob_name="commctrl" blob_size="24776" input_size="45419" />
     <module_data filename="module.pythoncom.const" blob_name="pythoncom" blob_size="116" input_size="204" />
     <module_data filename="module.pywin.const" blob_name="pywin" blob_size="171" input_size="286" />
@@ -5267,15 +5351,20 @@ lld-link: error: undefined symbol: __SNANL
     <module_data filename="module.win32com.client.selecttlb.const" blob_name="win32com.client.selecttlb" blob_size="1710" input_size="2750" />
     <module_data filename="module.win32com.client.util.const" blob_name="win32com.client.util" blob_size="1948" input_size="2764" />
     <module_data filename="module.win32com.const" blob_name="win32com" blob_size="649" input_size="1209" />
+    <module_data filename="module.win32com.shell.const" blob_name="win32com.shell" blob_size="260" input_size="415" />
+    <module_data filename="module.win32com.shell.shellcon.const" blob_name="win32com.shell.shellcon" blob_size="37188" input_size="60195" />
+    <module_data filename="module.win32com.storagecon.const" blob_name="win32com.storagecon" blob_size="2363" input_size="4148" />
     <module_data filename="module.win32con.const" blob_name="win32con" blob_size="86286" input_size="156587" />
+    <module_data filename="module.win32timezone.const" blob_name="win32timezone" blob_size="27358" input_size="31841" />
     <module_data filename="module.win32ui-preLoad.const" blob_name="win32ui-preLoad" blob_size="89" input_size="151" />
     <module_data filename="module.winerror.const" blob_name="winerror" blob_size="243162" input_size="417205" />
+    <module_data filename="module.winshell.const" blob_name="winshell" blob_size="12533" input_size="18526" />
   </data_composer>
   <performance-totals>
-    <optimization-time pass="1" time="22.4688" module_count="407" />
-    <optimization-time pass="2" time="0.2344" module_count="407" />
-    <optimization-time pass="all" time="22.7031" module_count="407" />
-    <code-generation-time time="0.7344" module_count="30" />
+    <optimization-time pass="1" time="23.0625" module_count="414" />
+    <optimization-time pass="2" time="0.3125" module_count="414" />
+    <optimization-time pass="all" time="23.3750" module_count="414" />
+    <code-generation-time time="0.8750" module_count="36" />
   </performance-totals>
   <python_binary filename="main.exe" backend_resource_mode="c23_embed" reproducible="no" />
   <command_line>
@@ -5313,6 +5402,7 @@ lld-link: error: undefined symbol: __SNANL
     <distribution name="PyQt6-Qt6" version="6.11.0" installer="pip" />
     <distribution name="PyQt6_sip" version="13.11.1" installer="pip" />
     <distribution name="pywin32" version="311" installer="pip" />
+    <distribution name="winshell" version="0.6" installer="pip" />
   </distributions>
   <python python_exe="${sys.prefix}\python.exe" python_flavor="CPython Official" python_version="3.14.5" os_name="Windows" os_release="11" arch_name="x86_64" filesystem_encoding="utf-8" gil="yes">
     <search_path>

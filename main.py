@@ -1,21 +1,27 @@
 import sys
 import os
 import json
-import time
 
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
 JST = timezone(timedelta(hours=9))
 
-BOOT_START = time.perf_counter()
+import winshell
+from win32com.client import Dispatch
 
 from PyQt6.QtWidgets import (
     QApplication,
     QWidget,
     QMenu,
+    QColorDialog,
+    QFontDialog,
     QHBoxLayout,
     QLabel,
+    QVBoxLayout,
+    QPushButton,
+    QDialog,
+    QSlider,
 )
 
 from PyQt6.QtGui import (
@@ -32,53 +38,35 @@ from PyQt6.QtCore import (
 )
 
 # =========================
-# 起動ログ
-# =========================
-
-def boot_log(label):
-
-    now = time.perf_counter()
-
-    print(
-        f"[BOOT] {label}: "
-        f"{now - BOOT_START:.3f} sec"
-    )
-
-
-# =========================
 # 定数
 # =========================
 
-if getattr(sys, 'frozen', False):
-
-    APP_DIR = Path(sys.executable).parent
-
-else:
-
-    APP_DIR = Path(__file__).parent
+APP_DIR = Path(__file__).parent
 
 SETTINGS_FILE = APP_DIR / "settings.json"
 
 DEFAULT_SETTINGS = {
 
+    # フォント
     "font_family": "Arial",
 
+    # 色
     "font_color": "#FFFFFF",
-
     "background_color": "#000000",
-
     "window_color": "#111111",
 
+    # 設定ウィンドウ色
     "settings_window_color": "#2B2B2B",
 
+    # 透明度
     "window_opacity": 0.95,
 
+    # サイズ
     "window_width": 700,
-
     "window_height": 300,
 
+    # 位置
     "x": 100,
-
     "y": 100
 }
 
@@ -96,24 +84,19 @@ class FlipDigit(QWidget):
         self.value = "0"
 
         self.font_family = "Arial"
-
         self.font_size = 100
 
         self.text_color = QColor("#FFFFFF")
-
         self.bg_color = QColor("#000000")
-
         self.line_color = QColor("#111111")
 
-        self.cached_font = None
+
 
     def set_value(self, value):
 
-        if self.value != value:
+        self.value = value
 
-            self.value = value
-
-            self.update()
+        self.update()
 
     def apply_style(self, settings, font_size):
 
@@ -133,20 +116,15 @@ class FlipDigit(QWidget):
             settings["window_color"]
         )
 
-        font = QFont(
-            self.font_family,
-            self.font_size
-        )
-
-        font.setBold(True)
-
-        self.cached_font = font
-
         self.update()
 
     def paintEvent(self, event):
 
         painter = QPainter(self)
+
+        painter.setRenderHint(
+            QPainter.RenderHint.Antialiasing
+        )
 
         rect = self.rect()
 
@@ -176,7 +154,14 @@ class FlipDigit(QWidget):
         )
 
         # フォント
-        painter.setFont(self.cached_font)
+        font = QFont(
+            self.font_family,
+            self.font_size
+        )
+
+        font.setBold(True)
+
+        painter.setFont(font)
 
         painter.setPen(self.text_color)
 
@@ -191,9 +176,402 @@ class FlipDigit(QWidget):
 # 設定ウィンドウ
 # =========================
 
-class SettingsDialog:
+class SettingsDialog(QDialog):
 
-    pass
+    def __init__(self, parent, settings):
+
+        super().__init__(parent)
+
+        self.parent_widget = parent
+
+        self.settings = settings.copy()
+
+        self.setWindowTitle("時計設定")
+
+        self.setFixedWidth(320)
+
+        self.setWindowFlags(
+            self.windowFlags()
+            | Qt.WindowType.WindowStaysOnTopHint
+        )
+
+        self.update_dialog_style()
+
+        layout = QVBoxLayout()
+
+        layout.setSpacing(15)
+
+        layout.setContentsMargins(
+            20,
+            20,
+            20,
+            20
+        )
+
+        self.setLayout(layout)
+
+        # =====================
+        # ボタン
+        # =====================
+
+        font_btn = QPushButton("フォント変更")
+        font_btn.clicked.connect(
+            self.change_font
+        )
+        layout.addWidget(font_btn)
+
+        text_btn = QPushButton("文字色変更")
+        text_btn.clicked.connect(
+            self.change_text_color
+        )
+        layout.addWidget(text_btn)
+
+        bg_btn = QPushButton("数字背景色変更")
+        bg_btn.clicked.connect(
+            self.change_bg_color
+        )
+        layout.addWidget(bg_btn)
+
+        window_btn = QPushButton("時計ウィンドウ色変更")
+        window_btn.clicked.connect(
+            self.change_window_color
+        )
+        layout.addWidget(window_btn)
+
+        settings_btn = QPushButton("設定ウィンドウ色変更")
+        settings_btn.clicked.connect(
+            self.change_settings_window_color
+        )
+        layout.addWidget(settings_btn)
+
+        # =====================
+        # 透明度
+        # =====================
+
+        opacity_label = QLabel("透明度")
+        opacity_label.setStyleSheet(
+            "color:white; background:transparent;"
+        )
+
+        layout.addWidget(opacity_label)
+
+        self.opacity_slider = QSlider(
+            Qt.Orientation.Horizontal
+        )
+
+        self.opacity_slider.setMinimum(30)
+
+        self.opacity_slider.setMaximum(100)
+
+        self.opacity_slider.setValue(
+            int(
+                self.settings["window_opacity"]
+                * 100
+            )
+        )
+
+        self.opacity_slider.valueChanged.connect(
+            self.change_opacity
+        )
+
+        layout.addWidget(
+            self.opacity_slider
+        )
+
+        # =====================
+        # リセット
+        # =====================
+
+        reset_btn = QPushButton(
+            "デフォルトに戻す"
+        )
+
+        reset_btn.clicked.connect(
+            self.reset_settings
+        )
+
+        layout.addWidget(reset_btn)
+
+        # =====================
+        # OK
+        # =====================
+
+        ok_btn = QPushButton("OK")
+
+        ok_btn.clicked.connect(
+            self.accept
+        )
+
+        layout.addWidget(ok_btn)
+
+    # =====================
+    # スタイル
+    # =====================
+
+    def update_dialog_style(self):
+
+        bg = self.settings[
+            "settings_window_color"
+        ]
+
+        self.setStyleSheet(f"""
+        QDialog {{
+            background-color: {bg};
+            border-radius: 20px;
+        }}
+
+        QPushButton {{
+            background-color: #3A3A3A;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+        }}
+
+        QPushButton:hover {{
+            background-color: #505050;
+        }}
+
+        QLabel {{
+            color: white;
+            background: transparent;
+        }}
+
+        QSlider {{
+            background: transparent;
+        }}
+        """)
+
+    # =====================
+    # プレビュー
+    # =====================
+
+    def preview_update(self):
+
+        self.parent_widget.settings = (
+            self.settings.copy()
+        )
+
+        self.parent_widget.apply_settings()
+
+        self.update_dialog_style()
+
+    # =====================
+    # リセット
+    # =====================
+
+    def reset_settings(self):
+
+        self.settings = (
+            DEFAULT_SETTINGS.copy()
+        )
+
+        self.preview_update()
+
+    # =====================
+    # フォント
+    # =====================
+
+    def change_font(self):
+
+        current_font = QFont(
+            self.settings["font_family"],
+            12
+        )
+
+        dialog = QFontDialog(
+            current_font,
+            self
+        )
+
+        # リアルタイム反映
+        dialog.currentFontChanged.connect(
+            self.preview_font_change
+        )
+
+        if dialog.exec():
+
+            font = dialog.selectedFont()
+
+            self.settings["font_family"] = (
+                font.family()
+            )
+
+            self.preview_update()
+
+    def preview_font_change(self, font):
+
+        self.settings["font_family"] = (
+            font.family()
+        )
+
+        self.preview_update()
+
+    # =====================
+    # 文字色
+    # =====================
+
+    def change_text_color(self):
+
+        current_color = QColor(
+            self.settings["font_color"]
+        )
+
+        dialog = QColorDialog(
+            current_color,
+            self
+        )
+
+        dialog.currentColorChanged.connect(
+            self.preview_text_color
+        )
+
+        if dialog.exec():
+
+            color = dialog.selectedColor()
+
+            self.settings["font_color"] = (
+                color.name()
+            )
+
+            self.preview_update()
+
+    def preview_text_color(self, color):
+
+        self.settings["font_color"] = (
+            color.name()
+        )
+
+        self.preview_update()
+
+    # =====================
+    # 数字背景色
+    # =====================
+
+    def change_bg_color(self):
+
+        current_color = QColor(
+            self.settings["background_color"]
+        )
+
+        dialog = QColorDialog(
+            current_color,
+            self
+        )
+
+        dialog.currentColorChanged.connect(
+            self.preview_bg_color
+        )
+
+        if dialog.exec():
+
+            color = dialog.selectedColor()
+
+            self.settings["background_color"] = (
+                color.name()
+            )
+
+            self.preview_update()
+
+    def preview_bg_color(self, color):
+
+        self.settings["background_color"] = (
+            color.name()
+        )
+
+        self.preview_update()
+
+    # =====================
+    # 時計背景色
+    # =====================
+
+    def change_window_color(self):
+
+        current_color = QColor(
+            self.settings["window_color"]
+        )
+
+        dialog = QColorDialog(
+            current_color,
+            self
+        )
+
+        dialog.currentColorChanged.connect(
+            self.preview_window_color
+        )
+
+        if dialog.exec():
+
+            color = dialog.selectedColor()
+
+            self.settings["window_color"] = (
+                color.name()
+            )
+
+            self.preview_update()
+
+    def preview_window_color(self, color):
+
+        self.settings["window_color"] = (
+            color.name()
+        )
+
+        self.preview_update()
+
+    # =====================
+    # 設定背景色
+    # =====================
+
+    def change_settings_window_color(self):
+
+        current_color = QColor(
+            self.settings[
+                "settings_window_color"
+            ]
+        )
+
+        dialog = QColorDialog(
+            current_color,
+            self
+        )
+
+        dialog.currentColorChanged.connect(
+            self.preview_settings_window_color
+        )
+
+        if dialog.exec():
+
+            color = dialog.selectedColor()
+
+            self.settings[
+                "settings_window_color"
+            ] = color.name()
+
+            self.preview_update()
+
+    def preview_settings_window_color(
+        self,
+        color
+    ):
+
+        self.settings[
+            "settings_window_color"
+        ] = color.name()
+
+        self.preview_update()
+
+    # =====================
+    # 透明度
+    # =====================
+
+    def change_opacity(self, value):
+
+        self.settings["window_opacity"] = (
+            value / 100
+        )
+
+        self.preview_update()
 
 
 # =========================
@@ -206,35 +584,17 @@ class ClockWidget(QWidget):
 
         super().__init__()
 
-        boot_log("ClockWidget start")
-
         self.settings = self.load_settings()
-
-        boot_log("settings loaded")
 
         self.setup_window()
 
         self.create_ui()
 
-        # 遅延適用
-        QTimer.singleShot(
-            0,
-            self.delayed_init
-        )
-
-        boot_log("ClockWidget end")
-
-    # =====================
-    # 遅延初期化
-    # =====================
-
-    def delayed_init(self):
-
         self.apply_settings()
 
         self.start_timer()
 
-        boot_log("delayed init complete")
+        self.register_startup_once()
 
     # =====================
     # ウィンドウ
@@ -270,8 +630,7 @@ class ClockWidget(QWidget):
 
         layout = QHBoxLayout()
 
-        layout.setSpacing(10)
-
+        # 全体余白
         layout.setContentsMargins(
             15,
             15,
@@ -279,12 +638,18 @@ class ClockWidget(QWidget):
             15
         )
 
+        # 数字間隔
+        DIGIT_SPACING = 10
+
         self.setLayout(layout)
 
         self.digits = []
 
+        # =====================
         # 時
-        for _ in range(2):
+        # =====================
+
+        for i in range(2):
 
             digit = FlipDigit()
 
@@ -292,19 +657,35 @@ class ClockWidget(QWidget):
 
             self.digits.append(digit)
 
-        # :
+            if i == 0:
+                layout.addSpacing(DIGIT_SPACING)
+
+        # =====================
+        # コロン
+        # =====================
+
+        # 左余白
+        layout.addSpacing(18)
+
         self.colon = QLabel(":")
 
         self.colon.setAlignment(
             Qt.AlignmentFlag.AlignCenter
         )
 
-        self.colon.setFixedWidth(20)
+        # コロン幅
+        self.colon.setFixedWidth(35)
 
         layout.addWidget(self.colon)
 
+        # 右余白
+        layout.addSpacing(18)
+
+        # =====================
         # 分
-        for _ in range(2):
+        # =====================
+
+        for i in range(2):
 
             digit = FlipDigit()
 
@@ -312,206 +693,13 @@ class ClockWidget(QWidget):
 
             self.digits.append(digit)
 
+            if i == 0:
+                layout.addSpacing(DIGIT_SPACING)
     # =====================
     # 設定画面
     # =====================
 
     def open_settings(self):
-
-        # 遅延 import
-        from PyQt6.QtWidgets import (
-            QColorDialog,
-            QFontDialog,
-            QVBoxLayout,
-            QPushButton,
-            QDialog,
-            QSlider,
-        )
-
-        class SettingsDialog(QDialog):
-
-            def __init__(dialog_self, parent, settings):
-
-                super().__init__(parent)
-
-                dialog_self.parent_widget = parent
-
-                dialog_self.settings = (
-                    settings.copy()
-                )
-
-                dialog_self.setWindowTitle(
-                    "時計設定"
-                )
-
-                dialog_self.setFixedWidth(320)
-
-                dialog_self.setWindowFlags(
-                    dialog_self.windowFlags()
-                    | Qt.WindowType.WindowStaysOnTopHint
-                )
-
-                layout = QVBoxLayout()
-
-                layout.setSpacing(15)
-
-                layout.setContentsMargins(
-                    20,
-                    20,
-                    20,
-                    20
-                )
-
-                dialog_self.setLayout(layout)
-
-                # フォント
-                font_btn = QPushButton(
-                    "フォント変更"
-                )
-
-                layout.addWidget(font_btn)
-
-                def change_font():
-
-                    current_font = QFont(
-                        dialog_self.settings[
-                            "font_family"
-                        ],
-                        12
-                    )
-
-                    dialog = QFontDialog(
-                        current_font,
-                        dialog_self
-                    )
-
-                    dialog.currentFontChanged.connect(
-                        preview_font
-                    )
-
-                    if dialog.exec():
-
-                        font = dialog.selectedFont()
-
-                        dialog_self.settings[
-                            "font_family"
-                        ] = font.family()
-
-                        preview_update()
-
-                def preview_font(font):
-
-                    dialog_self.settings[
-                        "font_family"
-                    ] = font.family()
-
-                    preview_update()
-
-                font_btn.clicked.connect(
-                    change_font
-                )
-
-                # 色
-                text_btn = QPushButton(
-                    "文字色変更"
-                )
-
-                layout.addWidget(text_btn)
-
-                def change_color():
-
-                    dialog = QColorDialog(
-                        QColor(
-                            dialog_self.settings[
-                                "font_color"
-                            ]
-                        ),
-                        dialog_self
-                    )
-
-                    dialog.currentColorChanged.connect(
-                        preview_color
-                    )
-
-                    if dialog.exec():
-
-                        dialog_self.settings[
-                            "font_color"
-                        ] = (
-                            dialog.selectedColor()
-                            .name()
-                        )
-
-                        preview_update()
-
-                def preview_color(color):
-
-                    dialog_self.settings[
-                        "font_color"
-                    ] = color.name()
-
-                    preview_update()
-
-                text_btn.clicked.connect(
-                    change_color
-                )
-
-                # 透明度
-                opacity_label = QLabel(
-                    "透明度"
-                )
-
-                layout.addWidget(
-                    opacity_label
-                )
-
-                slider = QSlider(
-                    Qt.Orientation.Horizontal
-                )
-
-                slider.setMinimum(30)
-
-                slider.setMaximum(100)
-
-                slider.setValue(
-                    int(
-                        dialog_self.settings[
-                            "window_opacity"
-                        ] * 100
-                    )
-                )
-
-                layout.addWidget(slider)
-
-                def opacity_changed(value):
-
-                    dialog_self.settings[
-                        "window_opacity"
-                    ] = value / 100
-
-                    preview_update()
-
-                slider.valueChanged.connect(
-                    opacity_changed
-                )
-
-                ok_btn = QPushButton(
-                    "OK"
-                )
-
-                ok_btn.clicked.connect(
-                    dialog_self.accept
-                )
-
-                layout.addWidget(ok_btn)
-
-                def preview_update():
-
-                    dialog_self.parent_widget.settings = (
-                        dialog_self.settings.copy()
-                    )
-
-                    dialog_self.parent_widget.apply_settings()
 
         dialog = SettingsDialog(
             self,
@@ -562,6 +750,7 @@ class ClockWidget(QWidget):
 
     def apply_settings(self):
 
+        # 時計ウィンドウ色
         self.setStyleSheet(f"""
         background-color:
         {self.settings["window_color"]};
@@ -569,10 +758,12 @@ class ClockWidget(QWidget):
         border-radius:20px;
         """)
 
+        # 透明度
         self.setWindowOpacity(
             self.settings["window_opacity"]
         )
 
+        # 自動文字サイズ
         width_size = int(
             self.width() * 0.13
         )
@@ -586,6 +777,7 @@ class ClockWidget(QWidget):
             height_size
         )
 
+        # 数字
         for digit in self.digits:
 
             digit.apply_style(
@@ -593,6 +785,7 @@ class ClockWidget(QWidget):
                 dynamic_font_size
             )
 
+        # :
         colon_font_size = int(
             dynamic_font_size * 0.8
         )
@@ -628,21 +821,15 @@ class ClockWidget(QWidget):
 
         if SETTINGS_FILE.exists():
 
-            try:
+            with open(
+                SETTINGS_FILE,
+                "r",
+                encoding="utf-8"
+            ) as f:
 
-                with open(
-                    SETTINGS_FILE,
-                    "r",
-                    encoding="utf-8"
-                ) as f:
+                loaded = json.load(f)
 
-                    loaded = json.load(f)
-
-                    settings.update(loaded)
-
-            except:
-
-                pass
+                settings.update(loaded)
 
         return settings
 
@@ -660,23 +847,17 @@ class ClockWidget(QWidget):
             self.height()
         )
 
-        try:
+        with open(
+            SETTINGS_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
 
-            with open(
-                SETTINGS_FILE,
-                "w",
-                encoding="utf-8"
-            ) as f:
-
-                json.dump(
-                    self.settings,
-                    f,
-                    indent=4
-                )
-
-        except:
-
-            pass
+            json.dump(
+                self.settings,
+                f,
+                indent=4
+            )
 
     # =====================
     # リサイズ
@@ -686,22 +867,9 @@ class ClockWidget(QWidget):
 
         self.apply_settings()
 
-        super().resizeEvent(event)
-
-    def moveEvent(self, event):
-
-        QTimer.singleShot(
-            300,
-            self.save_settings
-        )
-
-        super().moveEvent(event)
-
-    def closeEvent(self, event):
-
         self.save_settings()
 
-        super().closeEvent(event)
+        super().resizeEvent(event)
 
     # =====================
     # 右クリックメニュー
@@ -749,54 +917,98 @@ class ClockWidget(QWidget):
 
     def create_startup_shortcut(self):
 
-        from win32com.client import Dispatch
+        startup = winshell.startup()
 
-        startup = os.path.join(
-            os.environ["APPDATA"],
-            r"Microsoft\Windows\Start Menu\Programs\Startup"
-        )
-
-        bat_path = os.path.join(
+        shortcut_path = os.path.join(
             startup,
-            "start_clock.bat"
+            "DesktopClock.lnk"
         )
 
-        exe_path = os.path.abspath(
-            sys.executable
+        target = str(
+            APP_DIR / "dist" / "main.exe"
         )
 
-        bat_content = f'''@echo off
-timeout /t 5 /nobreak > nul
-start "" "{exe_path}"
-'''
+        shell = Dispatch(
+            "WScript.Shell"
+        )
 
-        with open(
-            bat_path,
-            "w",
-            encoding="utf-8"
-        ) as f:
+        shortcut = shell.CreateShortCut(
+            shortcut_path
+        )
 
-            f.write(bat_content)
+        shortcut.Targetpath = target
+
+        shortcut.WorkingDirectory = str(
+            APP_DIR
+        )
+
+        shortcut.save()
+
+        print("Startup登録完了")
+
+
+    def register_startup_once(self):
+        try:
+            import winshell
+            from win32com.client import Dispatch
+            import os
+
+            startup = winshell.startup()
+
+            shortcut_path = os.path.join(
+                startup,
+                "DesktopClock.lnk"
+            )
+
+            # すでにあるなら何もしない
+            if os.path.exists(shortcut_path):
+                return
+
+            target = sys.executable  # ← Nuitka exeを自動取得
+
+            shell = Dispatch("WScript.Shell")
+            shortcut = shell.CreateShortCut(shortcut_path)
+
+            shortcut.Targetpath = target
+            shortcut.WorkingDirectory = os.path.dirname(target)
+            shortcut.save()
+
+            print("Startup登録完了")
+
+        except Exception as e:
+            print("Startup登録失敗:", e)
+
+
+
+
+
+
+
+
+
+
 
     # =====================
-    # 起動
+    # 終了
     # =====================
 
+    def closeEvent(self, event):
+
+        self.save_settings()
+
+        event.accept()
+
+
+# =========================
+# 起動
+# =========================
 
 if __name__ == "__main__":
 
-    boot_log("before QApplication")
-
     app = QApplication(sys.argv)
-
-    boot_log("after QApplication")
 
     window = ClockWidget()
 
-    boot_log("after ClockWidget")
-
     window.show()
-
-    boot_log("after show")
 
     sys.exit(app.exec())
