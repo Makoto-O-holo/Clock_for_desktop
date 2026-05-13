@@ -37,6 +37,7 @@ from PyQt6.QtCore import (
     QTimer,
 )
 
+
 # =========================
 # 定数
 # =========================
@@ -69,6 +70,13 @@ DEFAULT_SETTINGS = {
     "x": 100,
     "y": 100
 }
+
+
+
+if getattr(sys, 'frozen', False):
+    target = sys.executable
+else:
+    target = str(APP_DIR / "dist" / "main.exe")
 
 
 # =========================
@@ -949,42 +957,23 @@ class ClockWidget(QWidget):
 
     def register_startup_once(self):
         try:
-            import winshell
-            from win32com.client import Dispatch
-            import os
-
             startup = winshell.startup()
+            shortcut_path = os.path.join(startup, "DesktopClock.lnk")
 
-            shortcut_path = os.path.join(
-                startup,
-                "DesktopClock.lnk"
-            )
-
-            # すでにあるなら何もしない
             if os.path.exists(shortcut_path):
                 return
 
-            target = sys.executable  # ← Nuitka exeを自動取得
+            target = str(APP_DIR / "dist" / "main.exe")
 
             shell = Dispatch("WScript.Shell")
             shortcut = shell.CreateShortCut(shortcut_path)
 
             shortcut.Targetpath = target
-            shortcut.WorkingDirectory = os.path.dirname(target)
+            shortcut.WorkingDirectory = str(APP_DIR)
             shortcut.save()
-
-            print("Startup登録完了")
 
         except Exception as e:
             print("Startup登録失敗:", e)
-
-
-
-
-
-
-
-
 
 
 
