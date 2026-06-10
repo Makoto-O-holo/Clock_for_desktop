@@ -1,4 +1,4 @@
-# Clock
+# Clock for desktop
 デスクトップ用スタートアップ時計プログラム
 
 ## 環境
