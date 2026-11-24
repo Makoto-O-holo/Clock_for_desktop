@@ -44,7 +44,9 @@ from PyQt6.QtCore import (
 
 APP_DIR = Path(__file__).parent
 
-SETTINGS_FILE = APP_DIR / "settings.json"
+APP_DATA_DIR = Path(os.environ.get("APPDATA", Path.home())) / "Clock"
+SETTINGS_FILE = APP_DATA_DIR / "settings.json"
+LEGACY_SETTINGS_FILE = APP_DIR / "settings.json"
 
 DEFAULT_SETTINGS = {
 
@@ -71,12 +73,6 @@ DEFAULT_SETTINGS = {
     "y": 100
 }
 
-
-
-if getattr(sys, 'frozen', False):
-    target = sys.executable
-else:
-    target = str(APP_DIR / "main.dist" / "main.exe")
 
 
 # =========================
@@ -602,8 +598,6 @@ class ClockWidget(QWidget):
 
         self.start_timer()
 
-        self.register_startup_once()
-
     # =====================
     # ウィンドウ
     # =====================
@@ -822,23 +816,34 @@ class ClockWidget(QWidget):
     # =====================
 
     def load_settings(self):
+        settings = DEFAULT_SETTINGS.copy()
+        source = SETTINGS_FILE if SETTINGS_FILE.exists() else LEGACY_SETTINGS_FILE
+        if source.exists():
+            try:
+                with source.open("r", encoding="utf-8") as f:
+                    loaded = json.load(f)
+                if isinstance(loaded, dict):
+                    settings.update(loaded)
+            except (OSError, UnicodeError, json.JSONDecodeError):
+                pass
 
-        settings = (
-            DEFAULT_SETTINGS.copy()
-        )
-
-        if SETTINGS_FILE.exists():
-
-            with open(
-                SETTINGS_FILE,
-                "r",
-                encoding="utf-8"
-            ) as f:
-
-                loaded = json.load(f)
-
-                settings.update(loaded)
-
+        # Only accept values with the types and ranges used by the UI.
+        for key in ("font_family",):
+            if not isinstance(settings.get(key), str) or not settings[key].strip():
+                settings[key] = DEFAULT_SETTINGS[key]
+        for key in ("font_color", "background_color", "window_color", "settings_window_color"):
+            color = QColor(str(settings.get(key, "")))
+            settings[key] = color.name() if color.isValid() else DEFAULT_SETTINGS[key]
+        try:
+            opacity = float(settings["window_opacity"])
+            settings["window_opacity"] = min(1.0, max(0.3, opacity))
+        except (TypeError, ValueError):
+            settings["window_opacity"] = DEFAULT_SETTINGS["window_opacity"]
+        for key, minimum, maximum in (("window_width", 300, 4000), ("window_height", 150, 3000), ("x", -10000, 10000), ("y", -10000, 10000)):
+            try:
+                settings[key] = min(maximum, max(minimum, int(settings[key])))
+            except (TypeError, ValueError):
+                settings[key] = DEFAULT_SETTINGS[key]
         return settings
 
     def save_settings(self):
@@ -855,17 +860,13 @@ class ClockWidget(QWidget):
             self.height()
         )
 
-        with open(
-            SETTINGS_FILE,
-            "w",
-            encoding="utf-8"
-        ) as f:
-
-            json.dump(
-                self.settings,
-                f,
-                indent=4
-            )
+        APP_DATA_DIR.mkdir(parents=True, exist_ok=True)
+        temporary_file = SETTINGS_FILE.with_suffix(".json.tmp")
+        with temporary_file.open("w", encoding="utf-8") as f:
+            json.dump(self.settings, f, indent=4, ensure_ascii=False)
+            f.flush()
+            os.fsync(f.fileno())
+        temporary_file.replace(SETTINGS_FILE)
 
     # =====================
     # リサイズ
@@ -932,9 +933,7 @@ class ClockWidget(QWidget):
             "DesktopClock.lnk"
         )
 
-        target = str(
-            APP_DIR / "dist" / "main.exe"
-        )
+        target = sys.executable
 
         shell = Dispatch(
             "WScript.Shell"
@@ -946,6 +945,9 @@ class ClockWidget(QWidget):
 
         shortcut.Targetpath = target
 
+        if not getattr(sys, "frozen", False):
+            shortcut.Arguments = f'"{Path(__file__).resolve()}"'
+
         shortcut.WorkingDirectory = str(
             APP_DIR
         )
@@ -953,28 +955,6 @@ class ClockWidget(QWidget):
         shortcut.save()
 
         print("Startup登録完了")
-
-
-    def register_startup_once(self):
-        try:
-            startup = winshell.startup()
-            shortcut_path = os.path.join(startup, "DesktopClock.lnk")
-
-            if os.path.exists(shortcut_path):
-                return
-
-            target = str(APP_DIR / "dist" / "main.exe")
-
-            shell = Dispatch("WScript.Shell")
-            shortcut = shell.CreateShortCut(shortcut_path)
-
-            shortcut.Targetpath = target
-            shortcut.WorkingDirectory = str(APP_DIR)
-            shortcut.save()
-
-        except Exception as e:
-            print("Startup登録失敗:", e)
-
 
 
     # =====================
