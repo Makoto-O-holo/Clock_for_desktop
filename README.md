@@ -17,8 +17,8 @@ Windows デスクトップに日本時間（JST）の時計を表示するアプ
 ## ソースから実行
 
 ```powershell
-git clone https://github.com/mkt6006/Clock.git
-cd Clock
+git clone https://github.com/Makoto-O-holo/Clock_for_desktop.git
+cd Clock_for_desktop
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt

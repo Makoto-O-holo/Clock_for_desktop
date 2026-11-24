@@ -8,7 +8,6 @@ venv/
 # Local application settings and runtime data
 settings.json
 main.dist/settings.json
-%APPDATA%/
 
 # Nuitka build output
 *.build/
